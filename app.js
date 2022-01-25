@@ -12,7 +12,7 @@ let Random = Mock.Random;
 Date.prototype.format = dateFormat;
 
 /**
- * @api {get} http://localhost:3033/dataList 无人船数据
+ * @api {get} http://39.101.202.100:3033/dataList 无人船数据
  * @apiDescription 获取数据
  * @apiName dataList
  * @apiGroup Data
@@ -36,7 +36,7 @@ Date.prototype.format = dateFormat;
 	},
 	"msg": "操作成功"
 }
- * @apiSampleRequest http://localhost:3033/dataList
+ * @apiSampleRequest http://39.101.202.100:3033/dataList
  * @apiVersion 1.0.0
  */
 router.get("/dataList", (ctx) => {
