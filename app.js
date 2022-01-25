@@ -10,7 +10,22 @@ const Router = require("koa-router");
 const router = new Router();
 let Random = Mock.Random;
 Date.prototype.format = dateFormat;
-
+app.use((ctx, next) => {
+  // 设置允许跨域
+  ctx.set("Access-Control-Allow-Origin", "*");
+  ctx.set("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS");
+  // 请求头设置
+  ctx.set(
+    "Access-Control-Allow-Headers",
+    `Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild,x-token,sessionToken,token`
+  );
+  console.log(ctx.method)
+  if (ctx.method == "OPTIONS") {
+    ctx.body = 200;
+  } else {
+    next();
+  }
+});
 /**
  * @api {get} http://39.101.202.100:3033/dataList 无人船数据
  * @apiDescription 获取数据
@@ -63,21 +78,7 @@ router.get("/apidoc", function (req, res, next) {
 });
 app.use(router.routes());
 app.use(require("koa-static")(__dirname + "/public"));
-app.use((ctx, next) => {
-  // 设置允许跨域
-  ctx.set("Access-Control-Allow-Origin", "*");
-  ctx.set("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS");
-  // 请求头设置
-  ctx.set(
-    "Access-Control-Allow-Headers",
-    `Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild,x-token,sessionToken,token`
-  );
-  if (ctx.method == "OPTIONS") {
-    ctx.body = 200;
-  } else {
-    next();
-  }
-});
+
 // 监听端口
 app.listen(3033, () => {
   console.log("服务器已启动，http://localhost:3033");
