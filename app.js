@@ -10,7 +10,10 @@ const Router = require("koa-router");
 const router = new Router();
 let Random = Mock.Random;
 Date.prototype.format = dateFormat;
+// 引入mysql
+const mysql = require("./src/mysql/index");
 
+// 接口
 /**
  * @api {get} http://39.101.202.100:3033/dataList 无人船数据
  * @apiDescription 获取数据
@@ -50,19 +53,34 @@ router.get("/dataList", (ctx) => {
         total: 1,
         battery: 80,
         speed: Number(Random.float(0, 5).toFixed(3)),
-        distance: Random.integer(0, 7)
+        distance: Random.integer(0, 7),
       },
     ],
     msg: "操作成功",
   });
   ctx.body = data;
 });
+router.get("/demo", async (ctx, next) => {
+  try {
+    let data = await mysql.query("menu");
+    ctx.body = {
+      code: 200,
+      data: data,
+      msg: "操作成功",
+    };
+    await next();
+  } catch (e) {
+    ctx.body = "500";
+    await next();
+  }
+});
+
 app.use(require("koa-static")(__dirname + "/public"));
-router.get("/apidoc",  (ctx) => {
+router.get("/apidoc", (ctx) => {
   ctx.type("text/html");
   ctx.sendfile("public/apidoc/index.html");
 });
-app.use((ctx, next) => {
+app.use(async (ctx, next) => {
   // 设置允许跨域
   ctx.set("Access-Control-Allow-Origin", "*");
   ctx.set("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS");
@@ -74,11 +92,11 @@ app.use((ctx, next) => {
   if (ctx.method == "OPTIONS") {
     ctx.body = 200;
   } else {
-    next();
+    await next();
   }
 });
-app.use(router.routes());
 
+app.use(router.routes());
 
 // 监听端口
 app.listen(3033, () => {
