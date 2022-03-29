@@ -1,3 +1,8 @@
+/**
+ *  时间格式化函数
+ * @param {*} fmt 
+ * @returns 
+ */
 function dateFormat(fmt) {
   var o = {
     "M+": this.getMonth() + 1, //月份
