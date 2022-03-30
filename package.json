@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "api": "apidoc -i ./ -o ./public/apidoc",
     "dev": "node app.js"
   },
   "_moduleAliases": {
