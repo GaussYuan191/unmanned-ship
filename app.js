@@ -27,7 +27,7 @@ app.use(static(path.join(__dirname,'./static')))
 InitManager.initCore(app)
 
 // 监听端口
-const port = process.env.PORT || 3033;
+const port = process.env.PORT || 8080;
 https.createServer(options, app.callback()).listen(port, (err) => {
   if (err) {
     console.log('服务启动出错', err);
