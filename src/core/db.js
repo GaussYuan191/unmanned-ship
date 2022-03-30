@@ -41,7 +41,7 @@ sequelize.sync({
 }) // 不加这句不导入数据库
 
 Model.prototype.toJSON = function(){
-  // let data = this.dataValues
+
   let data = clone(this.dataValues)
 
   unset(data, 'updated_at')

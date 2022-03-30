@@ -56,7 +56,6 @@ User.init(
       //set方法，自动加密
       set(val){
         const salt = bcrypt.genSaltSync(10)
-        console.log("密码是", val);
         const psw = bcrypt.hashSync(val,salt)
         this.setDataValue('password',psw)
       }
