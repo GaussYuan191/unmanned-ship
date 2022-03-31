@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node app.js"
+    "dev": "nodemon app.js",
+    "start": "node app.js"
   },
   "_moduleAliases": {
     "@root": "src/",
