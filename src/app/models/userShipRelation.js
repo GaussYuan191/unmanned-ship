@@ -2,9 +2,20 @@ const { Sequelize, Model } = require("sequelize");
 const { sequelize } = require("../../core/db");
 
 class UserShipRelation extends Model {
-  
+  static async add (uid, sid) {
+    const userShipRelation = await UserShipRelation.findOne({
+      where: {
+        uid: uid,
+        sid: sid,
+      }
+    })
+    if (userShipRelation) {
+      throw new global.errs.QueryError("该绑定关系已经存在", 60004);
+    }
+    UserShipRelation.create({uid, sid})
+  }
 }
-User.init(
+UserShipRelation.init(
   {
     id: {
       type: Sequelize.INTEGER,

@@ -17,7 +17,7 @@ const sequelize = new Sequelize(dbName,user,password,{
   timezone: '+08:00',
   define: {
     //时间戳 create_time update_time delete_time
-    timestamps: true,
+    timestamps: false,
     //不会真正的删除，设置deletedAt时间戳,需要timestamps: true
     paranoid: true,
     //改变时间戳key

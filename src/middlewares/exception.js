@@ -13,6 +13,7 @@ const catchError = async (ctx, next) => {
     if(isHttpException) {
       ctx.body = {
         msg: error.msg,
+        data: error.data,
         error_code: error.errorCode,
         request: `${ctx.method}${ctx.path}`
       }
@@ -22,6 +23,7 @@ const catchError = async (ctx, next) => {
       ctx.body = {
         msg: 'something unkown error',
         error_code: 999,
+        data: error.data,
         request: `${ctx.method}${ctx.path}`
       }
       ctx.status = 500

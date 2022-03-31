@@ -1,9 +1,10 @@
 class HttpException extends Error {
-  constructor(msg = "服务器异常", errorCode = 10000, code = 400) {
+  constructor(msg = "服务器异常", errorCode = 10000, code = 400, data = '') {
     super();
     this.errorCode = errorCode;
     this.code = code;
     this.msg = msg;
+    this.data = data;
   }
 }
 class ParameterException extends HttpException {
@@ -15,10 +16,11 @@ class ParameterException extends HttpException {
   }
 }
 class Success extends HttpException {
-  constructor(msg, errorCode) {
+  constructor(data, errorCode) {
     super()
-    this.code= 201
-    this.msg = msg || 'ok'
+    this.code= 200
+    this.data = data || ''
+    this.msg = 'ok'
     this.errorCode = errorCode || 0
   }
 }
@@ -50,23 +52,15 @@ class Forbbiden extends HttpException {
   }
 }
 
-class LikeError extends HttpException {
+class QueryError extends HttpException {
   constructor(msg, errorCode){
     super()
-    this.code = 400
-    this.msg = msg || '你已经点赞过'
-    this.errorCode = errorCode || 60002
+    this.code = 200
+    this.msg = msg || '查询出错'
+    this.errorCode = errorCode || 60000
   }
 }
 
-class DislikeError extends HttpException {
-  constructor(msg, errorCode){
-    super()
-    this.code = 400
-    this.msg = msg || '你已经取消过点赞'
-    this.errorCode = errorCode || 60002
-  }
-}
 
 module.exports = {
   HttpException,
@@ -75,6 +69,5 @@ module.exports = {
   NotFound,
   AuthFailed,
   Forbbiden,
-  LikeError,
-  DislikeError
+  QueryError
 };

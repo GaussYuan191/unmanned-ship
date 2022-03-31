@@ -7,7 +7,7 @@ class Ship extends Model {
 
 }
 
-User.init(
+Ship.init(
   {
     sid: {
       type: Sequelize.INTEGER,

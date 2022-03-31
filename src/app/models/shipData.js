@@ -1,55 +1,37 @@
 const { Sequelize, Model } = require("sequelize");
 const { sequelize } = require("../../core/db");
-const { User } = require("./user");
 const { UserShipRelation } = require("./userShipRelation");
 const {Ship} = require("./ship");
-const { LoginType } = require("../lib/enum");
 
 class shipData extends Model {
-  static async getDataBy(code = "", type) {
-    let user = null;
-    switch (type) {
-      case LoginType.USER_EMAIL:
-        user = await User.findOne({
-          where: {
-            email: code,
-          },
-        });
-        break;
-      case LoginType.USER_MINI_PROGRAM:
-        user = await User.findOne({
-          where: {
-            openid: code,
-          },
-        });
-        break;
-      default:
-        throw new global.errs.ParameterException("没有相应的处理方法");
-        break;
-    }
-
-    if (!user) {
-      throw new global.errs.AuthFailed("用户不存在");
-    }
+  static async getData(uid) {
     let userShipRelation = await UserShipRelation.findOne({
       where: {
-        uid: user.id
+        uid: uid
       }
     })
+    if (!userShipRelation) {
+      throw new global.errs.QueryError("该用户没有所属的无人船, 请先绑定无人船", 60001);
+    }
     let ship = await Ship.findOne({
       where: {
         sid: userShipRelation.sid
       }
     })
-    let data = await ShipData.findOne({
+    if (!ship) {
+      throw new global.errs.QueryError("该无人船的数据不存在",  60002);
+    }
+    let data = await shipData.findOne({
       where: {
-        uid: user.id,
+        uid: uid,
+        sid: ship.sid
       },
     });
-    console.log('查出的数据', data);
+
     if (!data) {
-      throw new global.errs.AuthFailed("");
+      throw new global.errs.QueryError("暂无无人船的航行数据",  60003);
     }
+    return {...data.dataValues, ...ship.dataValues};
   }
 }
 shipData.init(
@@ -68,8 +50,10 @@ shipData.init(
     sid: Sequelize.INTEGER,
     battery: Sequelize.INTEGER,
     temp: Sequelize.INTEGER,
-    hum: Sequelize.INTEGER
-
+    hum: Sequelize.INTEGER,
+    speed: Sequelize.DECIMAL(10, 2),
+    algae_finish: Sequelize.FLOAT,
+    algae_weight: Sequelize.FLOAT
   },
   { sequelize,
     tableName: 'ship_data'
