@@ -13,12 +13,12 @@ class Auth {
       const userToken = basicAuth(ctx.req)
       let errMsg = 'token不合法'
       let decode
-
       if(!userToken || !userToken.name) {
         throw new global.errs.Forbbiden(errMsg)
       }
       try {
         decode = jwt.verify(userToken.name, global.config.security.secretKey)
+        console.log(decode)
       } catch (error) {
         if(error.name === 'TokenExpiredError'){
           errMsg = 'token已过期'
