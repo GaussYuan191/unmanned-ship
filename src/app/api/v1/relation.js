@@ -1,6 +1,5 @@
 const Router = require("koa-router");
 
-
 const { Auth } = require("../../../middlewares/auth");
 const { UserShipRelation } = require("../../models/userShipRelation");
 const router = new Router({
@@ -13,6 +12,5 @@ router.post("/add", new Auth().m, async (ctx, next) => {
   await UserShipRelation.add(uid, sid);
   throw new global.errs.Success();
 });
-
 
 module.exports = router;
