@@ -1,2 +1,4 @@
 # 忽略node_modules中的文件
 /node_modules
+# 忽略统计代码行数
+/.VSCodeCounter
