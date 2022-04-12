@@ -18,7 +18,27 @@ const InitManager = require('./src/core/init')
 const catchError = require('./src/middlewares/exception')
 const static = require('koa-static')
 const app = new Koa();
-
+// CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource sharing）。
+const cors = require('koa2-cors');
+app.use(cors({
+  origin: function (ctx) {
+     return "*"; // 允许来自所有域名请求
+      
+     // return ctx.header.origin;// 当*无法使用时，使用这句,同样允许所有跨域
+      
+     // return 'http://localhost:8080'; //单个跨域请求
+      
+     // 允许多个跨域
+    //  var allowCors = ['http://localhost:8080',  'http://localhost:8081'];
+      
+     return allowCors.indexOf(ctx.header.origin) > -1 ? ctx.header.origin : '';
+  },
+  exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+  maxAge: 5,
+  credentials: true,
+  allowMethods: ['GET', 'POST', 'DELETE'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+}))
 app.use(sslify())  // 使用ssl
 
 app.use(bodyParser())
