@@ -28,7 +28,7 @@ class RegisterValidator extends LinValidator {
     this.password2 = this.password1;
     this.nickname = [
       new Rule("isLength", "昵称不符合长度规范", {
-        min: 6,
+        min: 2,
         max: 32
       })
     ];
@@ -57,7 +57,7 @@ class TokenValidator extends LinValidator {
   constructor() {
     super();
     this.account = [
-      new Rule("isLength", "不符合账号规则", { min: 4, max: 32 })
+      new Rule("isLength", "不符合账号规则", { min: 2, max: 32 })
     ];
     this.secret = [
       new Rule("isOptional"),
