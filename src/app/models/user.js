@@ -64,6 +64,10 @@ User.init(
       type: Sequelize.STRING(64),
       unique: true,
     },
+    created_at: Sequelize.DATE,
+    updated_at: Sequelize.DATE,
+    // delete_at: Sequelize.DATE,
+    level: Sequelize.INTEGER
   },
   { sequelize, tableName: "user" }
 );
