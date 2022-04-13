@@ -67,7 +67,10 @@ User.init(
     created_at: Sequelize.DATE,
     updated_at: Sequelize.DATE,
     // delete_at: Sequelize.DATE,
-    level: Sequelize.INTEGER
+    level: {
+      type: Sequelize.INTEGER,
+      defaultValue: 8
+    }
   },
   { sequelize, tableName: "user" }
 );
