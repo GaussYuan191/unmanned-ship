@@ -11,11 +11,11 @@ class User extends Model {
       },
     });
     if (!user) {
-      throw new global.errs.AuthFailed("用户不存在");
+      throw new global.errs.Success("", 0, "用户不存在或密码不正确");
     }
     const correct = bcrypt.compareSync(plainPassword, user.password);
     if (!correct) {
-      throw new global.errs.AuthFailed("密码不正确");
+      throw new global.errs.Success("", 0, "用户不存在或密码不正确");
     }
     return user;
   }
@@ -69,8 +69,8 @@ User.init(
     // delete_at: Sequelize.DATE,
     level: {
       type: Sequelize.INTEGER,
-      defaultValue: 8
-    }
+      defaultValue: 8,
+    },
   },
   { sequelize, tableName: "user" }
 );

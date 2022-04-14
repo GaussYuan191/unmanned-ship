@@ -16,11 +16,11 @@ class ParameterException extends HttpException {
   }
 }
 class Success extends HttpException {
-  constructor(data, errorCode) {
+  constructor(data, errorCode, msg) {
     super()
     this.code= 200
     this.data = data || ''
-    this.msg = 'ok'
+    this.msg = msg || 'ok'
     this.errorCode = errorCode || 0
   }
 }
