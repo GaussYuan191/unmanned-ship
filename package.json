@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "start": "node app.js"
+    "start": "pm2 start processes.json",
+    "stop": "pm2 stop unmanned-ship"
   },
   "_moduleAliases": {
     "@root": "src/",
@@ -30,6 +31,7 @@
     "mariadb": "^2.1.1",
     "module-alias": "^2.2.2",
     "mysql2": "^1.7.0",
+    "pm2": "^5.2.0",
     "require-directory": "^2.1.1",
     "sequelize": "^5.19.0",
     "validator": "^11.1.0"
