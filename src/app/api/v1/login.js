@@ -16,22 +16,23 @@ const router = new Router({
 
 router.post("/", async (ctx, next) => {
   const v = await new TokenValidator().validate(ctx);
-  let token;
+  let token, data;
+
   // 分type处理
   // 这里为了兼容x-www-form-urlencoded方法，使用了强制转换成数字
   // 上一步已经判断了type是否存在，强制转换安全
   switch (parseInt(v.get("body.type"))) {
     case LoginType.USER_EMAIL:
-      token = await emailLogin(v.get("body.account"), v.get("body.secret"));
+      data = await emailLogin(v.get("body.account"), v.get("body.secret"));
       break;
     case LoginType.USER_MINI_PROGRAM:
       token = await WXManager.codeToToken(v.get("body.account"));
+      data = { token: token };
       break;
     default:
       throw new global.errs.ParameterException("没有相应的处理方法");
-      break;
   }
-  let data = { token: token };
+
   throw new global.errs.Success(data);
 });
 
@@ -44,7 +45,13 @@ router.post("/verify", async (ctx) => {
 
 async function emailLogin(account, secret) {
   const user = await User.verifyEmailPassword(account, secret);
-  return generateToken(user.uid, Auth.USER);
+  let userInfo = {
+    username: user.nickname,
+    email: user.account,
+    role_id: user.uid,
+  };
+  let data = { token: generateToken(user.uid, Auth.USER), userInfo: userInfo };
+  return data;
 }
 
 module.exports = router;
