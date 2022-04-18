@@ -48,10 +48,13 @@ async function emailLogin(account, secret) {
   let userInfo = {
     username: user.nickname,
     email: user.account,
-    role_id: user.uid,
+    _id: user.uid,
+    role: {
+      menus: ''
+    }
   };
   let data = { token: generateToken(user.uid, Auth.USER), userInfo: userInfo };
   return data;
 }
-
+  
 module.exports = router;

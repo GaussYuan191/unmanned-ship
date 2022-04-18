@@ -39,7 +39,7 @@ app.use(cors({
   allowMethods: ['GET', 'POST', 'DELETE'],
   allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
 }))
-app.use(sslify())  // 使用ssl
+// app.use(sslify())  // 使用ssl
 
 app.use(bodyParser())
 app.use(catchError)
@@ -48,11 +48,14 @@ InitManager.initCore(app)
 
 // 监听端口
 const port = process.env.PORT || 8080;
-https.createServer(options, app.callback()).listen(port, (err) => {
-  if (err) {
-    console.log('服务启动出错', err);
-  } else {
-    console.log('guessWord-server运行在' + port + '端口');
-    console.log(app)
-  }	
+// https.createServer(options, app.callback()).listen(port, (err) => {
+//   if (err) {
+//     console.log('服务启动出错', err);
+//   } else {
+//     console.log('guessWord-server运行在' + port + '端口');
+//     console.log(app)
+//   }	
+// });
+app.listen(port, () => {
+  console.log(`服务器已启动，http://127.0.0.1:${port}`);
 });

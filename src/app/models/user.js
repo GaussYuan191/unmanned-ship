@@ -32,6 +32,35 @@ class User extends Model {
       openid,
     });
   }
+  static async getUserList(queryParam) {
+    let { reqPageNum = "", reqPageSize = "", uid = "" } = queryParam;
+    reqPageNum = Number(reqPageNum);
+    reqPageSize = Number(reqPageSize);
+    console.log("请求参数", queryParam, uid);
+    let user;
+    if (uid) {
+      user = await User.findAndCountAll({
+        attributes: { exclude: ["password"] },
+        distinct: true,
+        where: {
+          uid: uid,
+        },
+      });
+    } else {
+      user = await User.findAndCountAll({
+        offset: (reqPageNum - 1) * reqPageSize,
+        limit: reqPageSize,
+        attributes: { exclude: ["password"] },
+        distinct: true,
+      });
+    }
+    if (!user) {
+      throw new global.errs.NotFound("用户不存在");
+    }
+    console.log("用户数据", user.count);
+    let data = { userInfoList: user.rows, ...queryParam, total: user.count };
+    return data;
+  }
 }
 
 User.init(

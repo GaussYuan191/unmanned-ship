@@ -1,10 +1,8 @@
 const { Sequelize, Model } = require("sequelize");
-const { UserShipRelation } = require("./userShipRelation");
 const { sequelize } = require("../../core/db");
-const { Camera } = require("./camera");
 
-class Ship extends Model {
-  static async getShipData(queryParam) {
+class Camera extends Model {
+  static async getCameraData(queryParam) {
     let { reqPageNum = "", reqPageSize = "", uid = "" } = queryParam;
     reqPageNum = Number(reqPageNum);
     reqPageSize = Number(reqPageSize);
@@ -25,35 +23,25 @@ class Ship extends Model {
         where: {
           sid: userShipRelation.sid,
         },
-        include: [
-          {
-            association: Ship.hasMany(Camera, { foreignKey: "cid" }),
-          },
-        ],
       });
     } else {
       data = await Ship.findAndCountAll({
         offset: (reqPageNum - 1) * reqPageSize,
         limit: reqPageSize,
         distinct: true,
-        include: [
-          {
-            association: Ship.hasMany(Camera, { foreignKey: "cid" }),
-          },
-        ],
       });
       console.log("data", data);
     }
     if (!data) {
       throw new global.errs.QueryError("该无人船的数据不存在", 60002);
     }
-    return { shipInfoList: data.rows, ...queryParam };
+    return data.rows;
   }
 }
 
-Ship.init(
+Camera.init(
   {
-    sid: {
+    cid: {
       type: Sequelize.INTEGER,
       //设置为主键  关系型数据库
       //不能重复 不能为空
@@ -63,14 +51,12 @@ Ship.init(
       //设置自增
       autoIncrement: true,
     },
-    cid: Sequelize.INTEGER,
-    name: Sequelize.STRING,
-    status: Sequelize.INTEGER,
+    cstatus: Sequelize.INTEGER,
   },
-  { sequelize, tableName: "ship" }
+  { sequelize, tableName: "camera" }
 );
 
 module.exports = {
-  Ship,
+  Camera,
 };
 //数据迁移 SQL 更新 风险

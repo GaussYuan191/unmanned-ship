@@ -23,7 +23,6 @@ class shipData extends Model {
     }
     let data = await shipData.findOne({
       where: {
-        uid: uid,
         sid: ship.sid
       },
     });
@@ -46,9 +45,11 @@ shipData.init(
       //设置自增
       autoIncrement: true
     },
-    uid: Sequelize.INTEGER,
     sid: Sequelize.INTEGER,
     battery: Sequelize.INTEGER,
+    created_at: Sequelize.DATE,
+    // updated_at: Sequelize.DATE,
+    // delete_at: Sequelize.DATE,
     temp: Sequelize.INTEGER,
     hum: Sequelize.INTEGER,
     speed: Sequelize.DECIMAL(10, 2),
@@ -56,7 +57,8 @@ shipData.init(
     algae_weight: Sequelize.FLOAT
   },
   { sequelize,
-    tableName: 'ship_data'
+    tableName: 'ship_data',
+    // timestamps: false,
   }
 );
 
