@@ -47,7 +47,23 @@ class Ship extends Model {
     if (!data) {
       throw new global.errs.QueryError("该无人船的数据不存在", 60002);
     }
+    
+    
+    // console.log(req)
     return { shipInfoList: data.rows, ...queryParam };
+  }
+  static async updateStatus(param) {
+    let data = await Ship.update(
+      {
+        status: param.status, //要修改的数据
+      },
+      {
+        where: { sid: param.sid }, //查询修改项的条件
+      }
+    );
+    if (!data[0]) {
+        throw new global.errs.NotFound("该无人船不存在");
+    }
   }
 }
 
