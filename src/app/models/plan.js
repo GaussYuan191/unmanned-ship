@@ -44,6 +44,20 @@ class Plan extends Model {
     };
     return data;
   }
+  static async addPlan(param) {
+    let { sid } = param;
+    let ship = await Ship.findAndCountAll({
+      where: {
+        sid: sid,
+      },
+    });
+    if (ship.rows.length == 0) {
+      throw new global.errs.NotFound("该无人船不存在, 添加失败");
+    }
+    await Plan.create(param);
+ 
+    
+  }
 }
 Plan.init(
   {
