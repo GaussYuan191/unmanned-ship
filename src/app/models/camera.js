@@ -1,39 +1,16 @@
 const { Sequelize, Model } = require("sequelize");
 const { sequelize } = require("../../core/db");
-
 class Camera extends Model {
-  static async getCameraData(queryParam) {
-    let { reqPageNum = "", reqPageSize = "", uid = "" } = queryParam;
-    reqPageNum = Number(reqPageNum);
-    reqPageSize = Number(reqPageSize);
-    let data;
-    if (uid) {
-      let userShipRelation = await UserShipRelation.findOne({
-        where: {
-          uid: uid,
-        },
-      });
-      if (!userShipRelation) {
-        throw new global.errs.QueryError(
-          "该用户没有所属的无人船, 请先绑定无人船",
-          60001
-        );
+  static async getVideo(queryParam) {
+    let { cid = "" } = queryParam;
+    let data = await Camera.findAndCountAll({
+      where:{
+        cid
       }
-      data = await Ship.findAndCountAll({
-        where: {
-          sid: userShipRelation.sid,
-        },
-      });
-    } else {
-      data = await Ship.findAndCountAll({
-        offset: (reqPageNum - 1) * reqPageSize,
-        limit: reqPageSize,
-        distinct: true,
-      });
-      console.log("data", data);
-    }
-    if (!data) {
-      throw new global.errs.QueryError("该无人船的数据不存在", 60002);
+    })
+    console.log(data.rows)
+    if (data.rows.length == 0) {
+      throw new global.errs.QueryError("该摄像头的视频地址不存在", 60002);
     }
     return data.rows;
   }
@@ -52,6 +29,7 @@ Camera.init(
       autoIncrement: true,
     },
     cstatus: Sequelize.INTEGER,
+    url: Sequelize.STRING,
   },
   { sequelize, tableName: "camera" }
 );
