@@ -9,6 +9,7 @@ class InitManager {
     InitManager.initLoadRouters()
     InitManager.loadHttpException()
     InitManager.loadConfig()
+    
   }
 
   //自动加载router
@@ -20,7 +21,9 @@ class InitManager {
     function whenLoadModule(obj) {
       if (obj instanceof Router) {
         InitManager.app.use(obj.routes());
+        InitManager.app.ws.use(obj.routes());
       }
+      
     }
   }
 

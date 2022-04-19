@@ -83,6 +83,28 @@ class NotEmptyValidator extends LinValidator {
     this.token = [new Rule("isLength", "不允许为空", { min: 1 })];
   }
 }
+class AddShipDataValidator extends LinValidator {
+  constructor() {
+    super();
+    this.sid = [new Rule("isLength", "无人船id不允许为空", { min: 1 })];
+    this.battery = [new Rule("isLength", "电量不允许为空", { min: 1 })];
+    this.temp = [new Rule("isLength", "温度不允许为空", { min: 1 })];
+    this.hum = [new Rule("isLength", "湿度不允许为空", { min: 1 })];
+    this.speed = [new Rule("isLength", "速度不允许为空", { min: 1 })];
+    this.algae_finish = [new Rule("isLength", "蓝藻打捞完成度不允许为空", { min: 1 })];
+    this.algae_weight = [new Rule("isLength", "蓝藻打捞量不允许为空", { min: 1 })];
+    this.status = [new Rule("isLength", "运行状态不允许为空", { min: 1 })];
+  }
+}
+class AddPlanDataValidator extends LinValidator {
+  constructor() {
+    super();
+    this.sid = [new Rule("isLength", "无人船id不允许为空", { min: 1 })];
+    this.pname = [new Rule("isLength", "计划的名字运行为空", { min: 1 })];
+    this.operation = [new Rule("isLength", "操作不允许为空", { min: 1 })];
+  
+  }
+}
 
 // 提取type检测
 function checkType(vals) {
@@ -172,5 +194,7 @@ module.exports = {
   LikeValidator,
   classicValidator,
   SearchValidator,
-  AddShortCommentValidator
+  AddShortCommentValidator,
+  AddShipDataValidator,
+  AddPlanDataValidator
 };
