@@ -96,6 +96,20 @@ class AddShipDataValidator extends LinValidator {
     this.status = [new Rule("isLength", "运行状态不允许为空", { min: 1 })];
   }
 }
+class AddShipValidator extends LinValidator {
+  constructor() {
+    super();
+    this.name = [new Rule("isLength", "无人船名字不允许为空", { min: 1 })];
+    this.cid = [new Rule("isLength", "绑定的摄像头编号不允许为空", { min: 1 })];
+  }
+}
+class UpdateShipDataValidator extends LinValidator {
+  constructor() {
+    super();
+    this.sid = [new Rule("isLength", "无人船id不允许为空", { min: 1 })];
+    this.name = [new Rule("isLength", "无人船名字不允许为空", { min: 1 })];
+  }
+}
 class AddPlanDataValidator extends LinValidator {
   constructor() {
     super();
@@ -104,6 +118,7 @@ class AddPlanDataValidator extends LinValidator {
     this.operation = [new Rule("isLength", "操作不允许为空", { min: 1 })];
   }
 }
+
 
 // 提取type检测
 function checkType(vals) {
@@ -142,18 +157,6 @@ function checkArtType(vals) {
 //   }
 // }
 
-class LikeValidator extends PositiveIntegerValidator {
-  constructor() {
-    super();
-    this.validateType = checkArtType;
-    //用类的方式解决
-    // const checker = new Checker(ArtType)
-    // this.validateType = checker.check.bind(checker)
-  }
-}
-
-class classicValidator extends LikeValidator {}
-
 class SearchValidator extends LinValidator {
   constructor() {
     super();
@@ -190,10 +193,10 @@ module.exports = {
   RegisterValidator,
   TokenValidator,
   NotEmptyValidator,
-  LikeValidator,
-  classicValidator,
   SearchValidator,
   AddShortCommentValidator,
   AddShipDataValidator,
-  AddPlanDataValidator
+  AddPlanDataValidator,
+  AddShipValidator,
+  UpdateShipDataValidator
 };

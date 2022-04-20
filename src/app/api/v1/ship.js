@@ -4,7 +4,7 @@ const { shipData } = require("../../models/shipData");
 const { Ship } = require("../../models/ship");
 const { Auth } = require("../../../middlewares/auth");
 const { sleep } = require("../../../utils/sleep");
-const { AddShipDataValidator } = require("../../validators/validator");
+const { AddShipDataValidator, AddShipValidator ,UpdateShipDataValidator} = require("../../validators/validator");
 const router = new Router({
   prefix: "/v1/ship",
 });
@@ -33,9 +33,19 @@ router.all('/ws/getData', async (ctx) => {
   
 })
 router.post("/getShipList", new Auth(Auth.USER).m, async (ctx, next) => {
-  let queryParam = ctx.request.body;
+  let queryParam = {...ctx.request.body, ...ctx.auth};
   let data = await Ship.getShipData(queryParam);
   throw new global.errs.Success(data);
+});
+router.post("/add", new Auth(Auth.ADMIN).m, async (ctx, next) => {
+  const v = await new AddShipValidator().validate(ctx);
+  let data = await Ship.addShip(v.get("body"));
+  throw new global.errs.Success("", 0, "无人船新增成功");
+});
+router.post("/update", new Auth(Auth.USER).m, async (ctx, next) => {
+  const v = await new UpdateShipDataValidator().validate(ctx);
+  let data = await Ship.updateShip(v.get("body"));
+  throw new global.errs.Success("", 0, "无人船修改成功");
 });
 router.post("/uploadData", new Auth(Auth.USER).m, async (ctx, next) => {
   if (flag) {

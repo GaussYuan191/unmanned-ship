@@ -5,11 +5,16 @@ const { Camera } = require("./camera");
 
 class Ship extends Model {
   static async getShipData(queryParam) {
-    let { reqPageNum = "", reqPageSize = "", uid = "" } = queryParam;
+    let {
+      reqPageNum = 0,
+      reqPageSize = 0,
+      uid = 0,
+      admin = false,
+    } = queryParam;
     reqPageNum = Number(reqPageNum);
     reqPageSize = Number(reqPageSize);
     let data;
-    if (uid) {
+    if (!admin) {
       let userShipRelation = await UserShipRelation.findOne({
         where: {
           uid: uid,
@@ -47,8 +52,7 @@ class Ship extends Model {
     if (!data) {
       throw new global.errs.QueryError("该无人船的数据不存在", 60002);
     }
-    
-    
+
     // console.log(req)
     return { shipInfoList: data.rows, ...queryParam };
   }
@@ -62,7 +66,36 @@ class Ship extends Model {
       }
     );
     if (!data[0]) {
-        throw new global.errs.NotFound("该无人船不存在");
+      throw new global.errs.NotFound("该无人船不存在");
+    }
+  }
+  static async addShip(param) {
+    let { cid = 0 } = param;
+    let camera = await Ship.findAndCountAll({
+      where: {
+        cid: cid,
+      },
+    });
+    if (camera.rows.length != 0) {
+      throw new global.errs.QueryError("摄像头已经绑定, 添加失败", 60002);
+    }
+    await Ship.create(param);
+  }
+  static async updateShip(param) {
+    let { sid } = param;
+    let data = await Ship.update(
+      {
+        ...param,
+      },
+      {
+        where: { sid }, //查询修改项的条件
+      }
+    );
+    // console.log("修改", data)
+    if (data.length != 0) {
+      throw new global.errs.Success("", 0, "修改成功");
+    } else {
+      throw new global.errs.EditError("修改失败");
     }
   }
 }
@@ -81,7 +114,10 @@ Ship.init(
     },
     cid: Sequelize.INTEGER,
     name: Sequelize.STRING,
-    status: Sequelize.INTEGER,
+    status: {
+      type: Sequelize.INTEGER,
+      defaultValue: 2,
+    },
   },
   { sequelize, tableName: "ship" }
 );

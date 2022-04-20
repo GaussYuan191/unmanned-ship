@@ -11,11 +11,11 @@ class User extends Model {
       },
     });
     if (!user) {
-      throw new global.errs.Success("", 0, "用户不存在或密码不正确");
+      throw new global.errs.QueryError("用户不存在或密码不正确");
     }
     const correct = bcrypt.compareSync(plainPassword, user.password);
     if (!correct) {
-      throw new global.errs.Success("", 0, "用户不存在或密码不正确");
+      throw new global.errs.QueryError("用户不存在或密码不正确");
     }
     return user;
   }
