@@ -1,6 +1,6 @@
 const Router = require("koa-router");
 
-const { Camera } = require("../../models/Camera");
+const { Camera } = require("../../models/camera");
 
 const { Auth } = require("../../../middlewares/auth");
 
