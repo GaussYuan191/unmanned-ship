@@ -53,7 +53,7 @@ async function emailLogin(account, secret) {
       menus: ''
     }
   };
-  let data = { token: generateToken(user.uid, Auth.USER), userInfo: userInfo };
+  let data = { token: generateToken(user.uid, user.level), userInfo: userInfo };
   return data;
 }
   

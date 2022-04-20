@@ -33,25 +33,30 @@ class User extends Model {
     });
   }
   static async getUserList(queryParam) {
-    let { reqPageNum = "", reqPageSize = "", uid = "" } = queryParam;
+    let {
+      reqPageNum = 0,
+      reqPageSize = 0,
+      uid = 0,
+      admin = false,
+    } = queryParam;
     reqPageNum = Number(reqPageNum);
     reqPageSize = Number(reqPageSize);
-    console.log("请求参数", queryParam, uid);
+    // console.log("请求参数", queryParam, uid, admin);
     let user;
-    if (uid) {
+    if (admin) {
+      user = await User.findAndCountAll({
+        offset: (reqPageNum - 1) * reqPageSize,
+        limit: reqPageSize,
+        attributes: { exclude: ["password"] },
+        distinct: true,
+      });
+    } else {
       user = await User.findAndCountAll({
         attributes: { exclude: ["password"] },
         distinct: true,
         where: {
           uid: uid,
         },
-      });
-    } else {
-      user = await User.findAndCountAll({
-        offset: (reqPageNum - 1) * reqPageSize,
-        limit: reqPageSize,
-        attributes: { exclude: ["password"] },
-        distinct: true,
       });
     }
     if (!user) {
@@ -60,6 +65,73 @@ class User extends Model {
     console.log("用户数据", user.count);
     let data = { userInfoList: user.rows, ...queryParam, total: user.count };
     return data;
+  }
+  static async updateUser(param) {
+    let { uid } = param;
+    // console.log("请求参数", param, uid);
+    let data = await User.update(
+      {
+        ...param, //要修改的数据
+      },
+      {
+        where: { uid }, //查询修改项的条件
+      }
+    );
+    if (data.length != 0) {
+      throw new global.errs.Success("", 0, "修改成功");
+    } else {
+      throw new global.errs.EditError("修改失败");
+    }
+  }
+  static async deleteUser(param) {
+    let { uid } = param;
+    console.log("请求参数", param, uid);
+    if (!uid) {
+      throw new global.errs.ParameterException();
+    }
+    let data = await User.destroy({
+      where: {
+        uid: uid,
+      },
+    });
+    console.log("data", data);
+    if (data) {
+      throw new global.errs.Success("", 0, "删除成功");
+    } else {
+      throw new global.errs.EditError("没有该用户，删除失败");
+    }
+  }
+  static async updatePassword(param) {
+    let { uid = "", oldPassword = "", newPassword = "" } = param;
+    // console.log("请求参数", param);
+    let passwordData = await User.findOne({
+      where: {
+        uid: uid,
+      },
+      attributes: ["password"],
+    });
+    const correct = bcrypt.compareSync(
+      oldPassword,
+      passwordData.dataValues.password
+    );
+    if (!correct) {
+      throw new global.errs.EditError("原密码错误，修改失败");
+    }
+
+    let data = await User.update(
+      {
+        password: newPassword, //要修改的数据
+      },
+      {
+        where: { uid }, //查询修改项的条件
+      }
+    );
+    // console.log("修改", data)
+    if (data.length != 0) {
+      throw new global.errs.Success("", 0, "修改成功");
+    } else {
+      throw new global.errs.EditError("修改失败");
+    }
   }
 }
 

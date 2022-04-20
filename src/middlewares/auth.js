@@ -13,6 +13,7 @@ class Auth {
       const userToken = basicAuth(ctx.req);
       let errMsg = "token不合法";
       let decode;
+      let flag = false;
       if (!userToken || !userToken.name) {
         throw new global.errs.Forbbiden(errMsg);
       }
@@ -24,15 +25,19 @@ class Auth {
         }
         throw new global.errs.Forbbiden(errMsg);
       }
-
-      if (decode.scope <= this.level) {
-        errMsg = "权限不足";
+      console.log("aaa", decode.scope, this.level);
+      if (decode.scope < this.level) {
+        errMsg = "权限不足,请求失败";
         throw new global.errs.Forbbiden(errMsg);
+      }
+      if (decode.scope >= Auth.ADMIN) {
+        flag = true;
       }
 
       ctx.auth = {
         uid: decode.uid,
         scope: decode.scope,
+        admin: flag,
       };
 
       await next();
