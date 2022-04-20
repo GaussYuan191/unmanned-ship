@@ -5,10 +5,20 @@ const { Ship } = require("./ship");
 
 class shipData extends Model {
   static async getData(queryParam) {
-    let { reqPageNum = "", reqPageSize = "", sid = "" } = queryParam;
+    let { reqPageNum = 0, reqPageSize = 0, sid = 0 , admin = false, uid = 0} = queryParam;
     reqPageNum = Number(reqPageNum);
     reqPageSize = Number(reqPageSize);
-    console.log("请求参数", queryParam, sid);
+    // console.log("请求参数", queryParam, sid);
+    if (!admin) {
+      let user_ship_relation = await UserShipRelation.findAndCountAll({
+        where: {
+          uid: uid
+        }
+      })
+      if (user_ship_relation.rows.length == 0) {
+        throw new global.errs.QueryError("请先与无人船绑定", 60002);
+      }
+    }
     let ship = await Ship.findOne({
       where: {
         sid: sid,
@@ -25,13 +35,10 @@ class shipData extends Model {
       },
     });
 
-    
-    data.dataValues.location = {
-      longitude: 113.032091,
-      latitude: 28.236334,
+     data.dataValues.location = {
+      longitude: data.dataValues.longitude,
+      latitude: data.dataValues.latitude,
     };
-    // console.log(item);
-
     if (!data) {
       throw new global.errs.QueryError("暂无无人船的航行数据", 60003);
     }
@@ -66,6 +73,8 @@ shipData.init(
     speed: Sequelize.DECIMAL(10, 2),
     algae_finish: Sequelize.FLOAT,
     algae_weight: Sequelize.FLOAT,
+    longitude: Sequelize.DECIMAL(10, 6),
+    latitude: Sequelize.DECIMAL(10, 6)
   },
   {
     sequelize,

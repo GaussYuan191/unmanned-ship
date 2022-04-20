@@ -102,7 +102,6 @@ class AddPlanDataValidator extends LinValidator {
     this.sid = [new Rule("isLength", "无人船id不允许为空", { min: 1 })];
     this.pname = [new Rule("isLength", "计划的名字运行为空", { min: 1 })];
     this.operation = [new Rule("isLength", "操作不允许为空", { min: 1 })];
-  
   }
 }
 

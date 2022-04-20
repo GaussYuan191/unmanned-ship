@@ -9,9 +9,8 @@ const router = new Router({
   prefix: "/v1/ship",
 });
 let flag = true;
-router.post("/getData", async (ctx, next) => {
-  // const uid = ctx.auth.uid;
-  let queryParam = ctx.request.body;
+router.post("/getData", new Auth(Auth.USER).m, async (ctx, next) => {
+  let queryParam = {...ctx.request.body, ...ctx.auth};
   let data = await shipData.getData(queryParam);
   throw new global.errs.Success(data);
 });
@@ -33,12 +32,12 @@ router.all('/ws/getData', async (ctx) => {
   setInterval(showShipData, 2000);
   
 })
-router.post("/getShipList", async (ctx, next) => {
+router.post("/getShipList", new Auth(Auth.USER).m, async (ctx, next) => {
   let queryParam = ctx.request.body;
   let data = await Ship.getShipData(queryParam);
   throw new global.errs.Success(data);
 });
-router.post("/uploadData", new Auth().m, async (ctx, next) => {
+router.post("/uploadData", new Auth(Auth.USER).m, async (ctx, next) => {
   if (flag) {
     const v = await new AddShipDataValidator().validate(ctx);
     await shipData.addData(v.get("body"));
