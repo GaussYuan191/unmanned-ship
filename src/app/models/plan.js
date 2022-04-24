@@ -58,6 +58,10 @@ class Plan extends Model {
  
     
   }
+  static async doPlan(param) {
+    let { id } = param;
+    
+  }
 }
 Plan.init(
   {
