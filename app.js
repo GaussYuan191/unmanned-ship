@@ -51,7 +51,7 @@ InitManager.initCore(app)
 
 // 监听端口
 const port = process.env.PORT || 8080;
-https.createServer(options, app.callback()).listen(port, (err) => {
+let server =  https.createServer(options, app.callback()).listen(port, (err) => {
   if (err) {
     console.log('服务启动出错', err);
   } else {
@@ -65,9 +65,9 @@ https.createServer(options, app.callback()).listen(port, (err) => {
 // });
 
 // websocket
-// const wss = new ws.Server({ server })
-// wss.on('connection', function connection(ws) {
-//   ws.on('message', function incoming(message) {
-//     console.log('received: %s', message)
-//   })
-// })
+const wss = new ws.Server({ server })
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    console.log('received: %s', message)
+  })
+})
