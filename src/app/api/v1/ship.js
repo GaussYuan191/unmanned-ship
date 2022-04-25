@@ -29,7 +29,7 @@ router.all('/ws/getData', async (ctx) => {
       
   });
   // 定时2秒 发送一次
-  setInterval(showShipData, 2000);
+  // setInterval(showShipData, 2000);
   
 })
 router.post("/getShipList", new Auth(Auth.USER).m, async (ctx, next) => {
