@@ -9,6 +9,7 @@ class ws {
     this.ws.on("connection", async (ws, request) => {
       console.log("请求链接", request.url);
       if (!request.url.includes("/v1/ws")) {
+        ws.send(JSON.stringify("请求路径错误"))
         return ws.close();
       }
       this.online = this.ws._server._connections;
@@ -16,6 +17,7 @@ class ws {
   
       const { id } = querystring.parse(request.url);
       if (!id) {
+        ws.send(JSON.stringify("缺少用户id"))
         return ws.close();
       }
       try {
