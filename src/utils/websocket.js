@@ -1,5 +1,5 @@
-const WebSocket = require('ws')
-const querystring = require('querystring')
+const WebSocket = require("ws");
+const querystring = require("querystring");
 class ws {
   static online = 0; // 在线连接
   static ws = WebSocket.Server; //默认实例
@@ -7,15 +7,14 @@ class ws {
     // 创建实例
     this.ws = new WebSocket.Server({ server, path: "/v1/ws" });
     this.ws.on("connection", async (ws, request) => {
-      console.log('请求链接', request.url)
+      console.log("请求链接", request.url);
       if (!request.url.includes("/v1/ws")) {
         return ws.close();
       }
       this.online = this.ws._server._connections;
       console.log(`socket当前在线${this.online}个连接`);
-      const {
-        query: { id },
-      } = querystring.parse(request.url);
+  
+      const { id } = querystring.parse(request.url);
       if (!id) {
         return ws.close();
       }
