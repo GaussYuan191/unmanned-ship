@@ -6,8 +6,8 @@ const { Camera } = require("./camera");
 class Ship extends Model {
   static async getShipData(queryParam) {
     let {
-      reqPageNum = 0,
-      reqPageSize = 0,
+      reqPageNum = 1,
+      reqPageSize = 10,
       uid = 0,
       admin = false,
     } = queryParam;
