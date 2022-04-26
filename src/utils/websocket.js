@@ -1,4 +1,5 @@
 const WebSocket = require('ws')
+const querystring = require('querystring')
 class ws {
   static online = 0; // 在线连接
   static ws = WebSocket.Server; //默认实例
@@ -14,7 +15,7 @@ class ws {
       console.log(`socket当前在线${this.online}个连接`);
       const {
         query: { id },
-      } = quertString.parseUrl(request.url);
+      } = querystring.parseUrl(request.url);
       if (!id) {
         return ws.close();
       }
