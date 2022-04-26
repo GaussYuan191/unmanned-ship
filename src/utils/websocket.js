@@ -1,37 +1,83 @@
 const WebSocket = require("ws");
-const querystring = require("querystring");
+const url = require("url");
+const { shipData } = require("../app/models/shipData");
 class ws {
-  static online = 0; // 在线连接
-  static ws = WebSocket.Server; //默认实例
+  static online = 0;        // 在线连接
+  static ws = WebSocket.Server;     //默认实例
+  static shipDataTime = {};      //获取无人船定时任务id
   static init(server) {
     // 创建实例
     this.ws = new WebSocket.Server({ server, path: "/v1/ws" });
     this.ws.on("connection", async (ws, request) => {
       console.log("请求链接", request.url);
       if (!request.url.includes("/v1/ws")) {
-        ws.send(JSON.stringify("请求路径错误"))
+        ws.send(JSON.stringify("请求路径错误"));
         return ws.close();
       }
       this.online = this.ws._server._connections;
       console.log(`socket当前在线${this.online}个连接`);
-  
-      const { id } = querystring.parse(request.url);
-      if (!id) {
-        ws.send(JSON.stringify("缺少用户id"))
-        return ws.close();
-      }
+      const param = url.parse(request.url, true)?.query;
       try {
         //do something
-        // 这里可以做一些加强判断查询数据库等行为
-
+        const id = param?.id;
         ws.id = id; // 添加ws实例的唯一标识
-        const obj = { message: "连接成功", retCode: 200 };
-        ws.send(JSON.stringify(obj));
+        this.sendShipData(id, ws, param);
       } catch (error) {
         console.log("websocket connection error", error);
         return ws.close();
       }
     });
+  }
+  //
+  static sendShipData(uid, ws, param) {
+    try {
+      const type = param?.type;
+      const sid = param?.sid;
+      console.log("请求参数", param);
+      if (!uid) {
+        ws.send(JSON.stringify("缺少用户id"));
+        return ws.close();
+      }
+      if (!type) {
+        ws.send(JSON.stringify("缺少请求数据名"));
+        return ws.close();
+      }
+      if (!sid) {
+        ws.send(JSON.stringify("缺少无人船id"));
+        return ws.close();
+      }
+      let showShipData = async (queryParam) => {
+        shipData
+          .getData(queryParam)
+          .then(
+            (res) => {
+              console.log("查询成功, websoet返回的数据中");
+              ws.send(JSON.stringify(res));
+            },
+            (err) => {
+              console.log("无人船查询数据异常", err);
+              ws.send(JSON.stringify(err));
+              clearInterval(this.shipDataTime[uid])
+              return ws.close();
+            }
+          )   
+      };
+      let timer 
+      // showShipData({ uid: uid, sid: sid });
+      if (!this.shipDataTime[uid]) {
+        this.shipDataTime[uid] = setInterval(() => {
+          return showShipData({uid:uid, sid:sid})
+        }, 4000);
+      } else {
+        this.shipDataTime[uid] = null
+        clearInterval(this.shipDataTime[uid])
+      }
+      
+      // console.log('用户定时任务id', this.shipDataTime[uid])
+    } catch (err) {
+      console.log("websocket error", err);
+      return ws.close();
+    }
   }
   // 发送客户端数据
   static sendToCliect(Data) {
