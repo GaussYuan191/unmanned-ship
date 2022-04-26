@@ -6,7 +6,8 @@ class ws {
     // 创建实例
     this.ws = new WebSocket.Server({ server, path: "/v1/ws" });
     this.ws.on("connection", async (ws, request) => {
-      if (!request.url.includes("/**/**/v1/ws")) {
+      console.log('请求链接', request.url)
+      if (!request.url.includes("/v1/ws")) {
         return ws.close();
       }
       this.online = this.ws._server._connections;
