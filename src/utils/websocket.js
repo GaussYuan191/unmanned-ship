@@ -15,7 +15,7 @@ class ws {
       console.log(`socket当前在线${this.online}个连接`);
       const {
         query: { id },
-      } = querystring.parseUrl(request.url);
+      } = querystring.parse(request.url);
       if (!id) {
         return ws.close();
       }
