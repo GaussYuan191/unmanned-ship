@@ -1,10 +1,11 @@
 const WebSocket = require("ws");
 const url = require("url");
 const { shipData } = require("../app/models/shipData");
+const { Ship } = require("../app/models/ship");
 class ws {
-  static online = 0;        // 在线连接
-  static ws = WebSocket.Server;     //默认实例
-  static shipDataTime = {};      //获取无人船定时任务id
+  static online = 0; // 在线连接
+  static ws = WebSocket.Server; //默认实例
+  static shipDataTime = {}; //获取无人船定时任务id
   static init(server) {
     // 创建实例
     this.ws = new WebSocket.Server({ server, path: "/v1/ws" });
@@ -47,32 +48,50 @@ class ws {
         return ws.close();
       }
       let showShipData = async (queryParam) => {
-        shipData
-          .getData(queryParam)
-          .then(
-            (res) => {
-              console.log("查询成功, websoet返回的数据中");
-              ws.send(JSON.stringify(res));
-            },
-            (err) => {
-              console.log("无人船查询数据异常", err);
-              ws.send(JSON.stringify(err));
-              clearInterval(this.shipDataTime[uid])
-              return ws.close();
+        shipData.getData(queryParam).then(
+          (res) => {
+            console.log("查询成功, websoet返回的数据中");
+            ws.send(JSON.stringify(res));
+          },
+          (err) => {
+            console.log("无人船查询数据异常", err);
+            ws.send(JSON.stringify(err));
+            clearInterval(this.shipDataTime[uid]);
+            return ws.close();
+          }
+        );
+        Ship.findAndCountAll({ where: { sid } }).then(
+          (res) => {
+            let shipStatus = res.rows[0].dataValues.status;
+            if (shipStatus == 0) {
+              let result = {
+                msg: "无人船运行异常",
+                data: "",
+                error_code: 40000,
+              };
+              ws.send(JSON.stringify(result));
             }
-          )   
+          },
+          (err) => {
+            console.log("无人船查询数据异常", err);
+            ws.send(JSON.stringify(err));
+            clearInterval(this.shipDataTime[uid]);
+            return ws.close();
+          }
+        );
       };
-      let timer 
+
+      let timer;
       // showShipData({ uid: uid, sid: sid });
       if (!this.shipDataTime[uid]) {
         this.shipDataTime[uid] = setInterval(() => {
-          return showShipData({uid:uid, sid:sid})
+          return showShipData({ uid: uid, sid: sid });
         }, 4000);
       } else {
-        this.shipDataTime[uid] = null
-        clearInterval(this.shipDataTime[uid])
+        this.shipDataTime[uid] = null;
+        clearInterval(this.shipDataTime[uid]);
       }
-      
+
       // console.log('用户定时任务id', this.shipDataTime[uid])
     } catch (err) {
       console.log("websocket error", err);
