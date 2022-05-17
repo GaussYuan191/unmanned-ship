@@ -2,7 +2,7 @@ const { Sequelize, Model } = require("sequelize");
 const { UserShipRelation } = require("./userShipRelation");
 const { sequelize } = require("../../core/db");
 const { Camera } = require("./camera");
-
+const Op = Sequelize.Op;
 class Ship extends Model {
   static async getShipData(queryParam) {
     let {
@@ -10,10 +10,13 @@ class Ship extends Model {
       reqPageSize = 10,
       uid = 0,
       admin = false,
+      keyword = ""
     } = queryParam;
     reqPageNum = Number(reqPageNum);
     reqPageSize = Number(reqPageSize);
     let data;
+    console.log("key", keyword)
+
     if (!admin) {
       let userShipRelation = await UserShipRelation.findOne({
         where: {
@@ -46,13 +49,17 @@ class Ship extends Model {
             association: Ship.hasMany(Camera, { foreignKey: "cid" }),
           },
         ],
+        where: {
+          name: {
+            // 模糊查询
+            [Op.like]:'%' + keyword + '%'
+          }
+        },
       });
-      console.log("data", data);
     }
     if (!data) {
       throw new global.errs.QueryError("该无人船的数据不存在", 60002);
     }
-
     // console.log(req)
     return { shipInfoList: data.rows, ...queryParam };
   }

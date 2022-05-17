@@ -9,7 +9,7 @@ const router = new Router({
 
 // 注册
 // 参数：email password1 password2
-router.post("/register", async (ctx, next) => {
+router.post("/register", new Auth(Auth.ADMIN).m, async (ctx, next) => {
   //validator必须位于第一行，起到守门员的作用
   let queryParam = ctx.request.body;
   console.log("注册请求参数", queryParam);

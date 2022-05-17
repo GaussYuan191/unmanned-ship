@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const { Sequelize, Model } = require("sequelize");
 
 const { sequelize } = require("../../core/db");
-
+const Op = Sequelize.Op;
 class User extends Model {
   static async verifyEmailPassword(email, plainPassword) {
     const user = await User.findOne({
@@ -38,6 +38,7 @@ class User extends Model {
       reqPageSize = 0,
       uid = 0,
       admin = false,
+      keyword = ""
     } = queryParam;
     reqPageNum = Number(reqPageNum);
     reqPageSize = Number(reqPageSize);
@@ -49,6 +50,12 @@ class User extends Model {
         limit: reqPageSize,
         attributes: { exclude: ["password"] },
         distinct: true,
+        where: {
+          nickname: {
+            // 模糊查询
+            [Op.like]:'%' + keyword + '%'
+          }
+        },
       });
     } else {
       user = await User.findAndCountAll({
@@ -56,6 +63,10 @@ class User extends Model {
         distinct: true,
         where: {
           uid: uid,
+          nickname: {
+            // 模糊查询
+            [Op.like]:'%' + keyword + '%'
+          }
         },
       });
     }

@@ -56,20 +56,54 @@ class shipData extends Model {
     return res;
   }
   static async addData(param) {
+    let status = 1;
+    if (param.battery <= 0) {
+      status = 0;
+    } else if (param.speed > 20 || param.speed < 0) {
+      status = 0;
+    }
+    param.status = status;
+    console.log("无人船运行", param.status)
     await Ship.updateStatus({ sid: param.sid, status: param.status });
     let data = shipData.create(param);
     // console.log(data);
     return data;
   }
+  // static async updateData(param) {
+  //   let { id } = param;
+  //   let paramData = {
+  //     sid: 1,
+  //     battery: 1,
+  //     speed: 2.7,
+  //     hum: 30,
+  //     temp: 55,
+  //     algae_finish: 25,
+  //     algae_weight: 16,
+  //     longitude: 113.032196,
+  //     latitude: 28.236394,
+  //     status: 1
+  //   }
+  //
+  //   console.log("请求参数", param, uid);
+  //   let data = await shipData.addData(
+  //     {
+  //       ...paramData, //要修改的数据
+  //     },
+  //     {
+  //       where: { uid }, //查询修改项的条件
+  //     }
+  //   );
+  //   if (data.length != 0) {
+  //     throw new global.errs.Success("", 0, "修改成功");
+  //   } else {
+  //     throw new global.errs.EditError("修改失败");
+  //   }
+  // }
 }
 shipData.init(
   {
     id: {
       type: Sequelize.INTEGER,
-      //设置为主键  关系型数据库
-      //不能重复 不能为空
-      //最好为数字，便于查询
-      //如果只是简单的自增，并发条件下可能出错
       primaryKey: true,
       //设置自增
       autoIncrement: true,

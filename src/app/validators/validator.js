@@ -87,7 +87,7 @@ class AddShipDataValidator extends LinValidator {
   constructor() {
     super();
     this.sid = [new Rule("isLength", "无人船id不允许为空", { min: 1 })];
-    this.battery = [new Rule("isLength", "电量不允许为空", { min: 1 })];
+    this.battery = [new Rule("isLength", "电量不允许为空", { min: 0 })];
     this.temp = [new Rule("isLength", "温度不允许为空", { min: 1 })];
     this.hum = [new Rule("isLength", "湿度不允许为空", { min: 1 })];
     this.speed = [new Rule("isLength", "速度不允许为空", { min: 1 })];

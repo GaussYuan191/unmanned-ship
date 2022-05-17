@@ -83,14 +83,14 @@ class ws {
 
       let timer;
       // showShipData({ uid: uid, sid: sid });
-      if (!this.shipDataTime[uid]) {
+      // if (!this.shipDataTime[uid]) {
         this.shipDataTime[uid] = setInterval(() => {
           return showShipData({ uid: uid, sid: sid });
         }, 4000);
-      } else {
-        this.shipDataTime[uid] = null;
-        clearInterval(this.shipDataTime[uid]);
-      }
+      // } else {
+      //   this.shipDataTime[uid] = null;
+      //   clearInterval(this.shipDataTime[uid]);
+      // }
 
       // console.log('用户定时任务id', this.shipDataTime[uid])
     } catch (err) {

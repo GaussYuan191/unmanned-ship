@@ -8,11 +8,6 @@ const router = new Router({
   prefix: "/v1/plan",
 });
 
-// router.get("/getData", new Auth().m, async (ctx, next) => {
-//   const uid = ctx.auth.uid;
-//   let data = await shipData.getData(uid)
-//   throw new global.errs.Success(data);
-// });
 router.post("/getPlanList", async (ctx, next) => {
   let queryParam = ctx.request.body;
 
@@ -29,6 +24,11 @@ router.post("/add", async (ctx, next) => {
   const v = await new AddPlanDataValidator().validate(ctx);
   let queryParam = v.get("body");
   let data = await Plan.addPlan(queryParam);
+  throw new global.errs.Success(data);
+});
+router.post("/delete", async (ctx, next) => {
+  let queryParam = ctx.request.body;
+  let data = await Plan.deletePlan(queryParam);
   throw new global.errs.Success(data);
 });
 

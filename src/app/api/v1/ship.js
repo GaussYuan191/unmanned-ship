@@ -26,11 +26,11 @@ router.all('/ws/getData', async (ctx) => {
   ctx.websocket.on('message', function(message) {
       console.log('接收的信息', JSON.parse(message.toString()));
       // uid为接收方，将接收到的信息发送给接收方uid,可以根据自己的需求处理数据再发送
-      
+
   });
   // 定时2秒 发送一次
   setInterval(showShipData, 2000);
-  
+
 })
 router.post("/getShipList", new Auth(Auth.USER).m, async (ctx, next) => {
   let queryParam = {...ctx.request.body, ...ctx.auth};
@@ -47,7 +47,7 @@ router.post("/update", new Auth(Auth.USER).m, async (ctx, next) => {
   let data = await Ship.updateShip(v.get("body"));
   throw new global.errs.Success("", 0, "无人船修改成功");
 });
-router.post("/uploadData", new Auth(Auth.USER).m, async (ctx, next) => {
+router.post("/uploadData", async (ctx, next) => {
   if (flag) {
     const v = await new AddShipDataValidator().validate(ctx);
     await shipData.addData(v.get("body"));
@@ -57,7 +57,7 @@ router.post("/uploadData", new Auth(Auth.USER).m, async (ctx, next) => {
     });
     throw new global.errs.Success("", 0, "上传数据成功");
   } else {
-    
+
     throw new global.errs.QueryError("上传数据的间隔小于1分钟");
   }
 });
